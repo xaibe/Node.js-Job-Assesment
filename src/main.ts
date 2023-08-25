@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { StaticTokenGuard } from './Auth/guards/static-token.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useLogger(new Logger('NestApplication')); 
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
   app.useGlobalGuards(new StaticTokenGuard());

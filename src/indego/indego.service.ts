@@ -8,6 +8,8 @@ export class IndegoService {
 
   async fetchAndStoreIndegoData() {
     try {
+      console.log("started Fetching data");
+      
       const response = await axios.get('https://www.rideindego.com/stations/json/');
       const indegoData = response.data;
       let stations= indegoData.features;
@@ -26,6 +28,7 @@ export class IndegoService {
         })
       });
       
+      console.log( 'Indego data fetched and stored successfully.');
       
 
     } catch (error) {

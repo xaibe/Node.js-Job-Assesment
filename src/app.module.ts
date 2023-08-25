@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { IndegoModule } from './indego/indego.module';
 import { APP_GUARD } from '@nestjs/core';
 import { StaticTokenGuard } from './Auth/guards/static-token.guard';
+import { HourlyTask } from './tasks/hourly-task';
+import { IndegoService } from './indego/indego.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [IndegoModule],
@@ -14,6 +17,8 @@ import { StaticTokenGuard } from './Auth/guards/static-token.guard';
         provide: APP_GUARD,
         useClass: StaticTokenGuard,
       },
+      HourlyTask,
+      IndegoService,PrismaService
     ],
 })
 export class AppModule {}
