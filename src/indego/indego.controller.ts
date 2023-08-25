@@ -1,7 +1,8 @@
 import { Controller, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { IndegoService } from './indego.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('Indego')
 @Controller('api/v1')
 export class IndegoController {
@@ -29,7 +30,7 @@ export class IndegoController {
     @Query('at') at: string
   ) {
     const snapshot = await this.indegoService.getStationSnapshot(
-      kioskId,
+     +kioskId,
       new Date(at)
     );
     if (!snapshot) {

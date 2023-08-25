@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
-
+const apiKey=process.env.OPEN_WEATHER_MAP_API_KEY;
 @Injectable()
 export class IndegoService {
   constructor(private readonly prisma: PrismaService) {}
@@ -10,9 +10,24 @@ export class IndegoService {
     try {
       const response = await axios.get('https://www.rideindego.com/stations/json/');
       const indegoData = response.data;
-
+      let stations= indegoData.features;
       // Store the data using Prisma
-      await this.prisma.indegoData.createMany({ data: indegoData });
+    const data= await this.prisma.indegoData.create({
+        data:{timestamp:indegoData.last_updated}
+      })
+      
+      stations.forEach(async station => {
+        await this.prisma.station.create({
+          data:{
+            indegoDataId:data.id,
+          geometry:station.geometry,
+          kioskId:station.properties.id,
+        properties:station.properties,}
+        })
+      });
+      
+      
+
     } catch (error) {
       throw new Error('Error fetching and storing Indego data.');
     }
@@ -29,6 +44,9 @@ export class IndegoService {
       orderBy: {
         timestamp: 'asc',
       },
+      include:{
+        stations:true,
+      }
     });
 
     if (!snapshotData) {
@@ -37,7 +55,7 @@ export class IndegoService {
 
     // Fetch weather data using Open Weather Map API
     const weatherResponse = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=Philadelphia&appid=YOUR_API_KEY`
+      `https://api.openweathermap.org/data/2.5/weather?q=Philadelphia&appid=${apiKey}`
     );
 
     return {
@@ -47,7 +65,7 @@ export class IndegoService {
     };
   }
 
-  async getStationSnapshot(kioskId: string, at: Date) {
+  async getStationSnapshot(kioskId:number, at: Date) {
     // Fetch snapshot data from Prisma
     const snapshotData = await this.prisma.indegoData.findFirst({
       where: {
@@ -63,6 +81,9 @@ export class IndegoService {
       orderBy: {
         timestamp: 'asc',
       },
+      include:{
+        stations:true,
+      }
     });
 
     if (!snapshotData) {
@@ -76,7 +97,7 @@ export class IndegoService {
 
     // Fetch weather data using Open Weather Map API
     const weatherResponse = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=Philadelphia&appid=YOUR_API_KEY`
+      `https://api.openweathermap.org/data/2.5/weather?q=Philadelphia&appid=${apiKey}`
     );
 
     return {

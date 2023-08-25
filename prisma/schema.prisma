@@ -10,5 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model indegoData{
+model indegoData {
+  id        String    @id @default(uuid())
+  timestamp DateTime
+  stations  Station[]
+}
+
+model Station {
+  id           String      @id @default(uuid())
+  geometry     Json
+  properties   Json
+  kioskId      Int
+  indegoData   indegoData? @relation(fields: [indegoDataId], references: [id])
+  indegoDataId String?
 }
