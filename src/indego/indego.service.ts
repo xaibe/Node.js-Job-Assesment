@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
+
 const apiKey=process.env.OPEN_WEATHER_MAP_API_KEY;
 @Injectable()
 export class IndegoService {
