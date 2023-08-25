@@ -7,7 +7,7 @@ import { IndegoService } from 'src/indego/indego.service';
 export class HourlyTask {
 constructor(private indegoService:IndegoService){}
     logger: any;
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_HOUR)
   async handleCron() {
     await this.indegoService.fetchAndStoreIndegoData();
     

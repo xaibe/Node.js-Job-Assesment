@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -8,10 +8,11 @@ export class IndegoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async fetchAndStoreIndegoData() {
-    try {
+    
       console.log("started Fetching data");
       
       const response = await axios.get('https://www.rideindego.com/stations/json/');
+    if(response){
       const indegoData = response.data;
       let stations= indegoData.features;
       // Store the data using Prisma
@@ -30,11 +31,12 @@ export class IndegoService {
       });
       
       console.log( 'Indego data fetched and stored successfully.');
-      
-
-    } catch (error) {
-      throw new Error('Error fetching and storing Indego data.');
-    }
+      return true;
+    } 
+else{
+return null;
+}
+    
   }
 
   async getStationsSnapshot(at: Date) {
@@ -67,6 +69,7 @@ export class IndegoService {
       stations: snapshotData.stations,
       weather: weatherResponse.data,
     };
+  
   }
 
   async getStationSnapshot(kioskId:number, at: Date) {
@@ -103,11 +106,18 @@ export class IndegoService {
     const weatherResponse = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=Philadelphia&appid=${apiKey}`
     );
+    if(stationData && weatherResponse){
 
-    return {
-      at: snapshotData.timestamp.toISOString(),
-      station: stationData,
-      weather: weatherResponse.data,
-    };
-  }
+      return {
+        at: snapshotData.timestamp.toISOString(),
+        station: stationData,
+        weather: weatherResponse.data,
+      };
+    }
+    else{
+      return null;
+    }
+
+  
+}
 }

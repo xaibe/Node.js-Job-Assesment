@@ -17,8 +17,9 @@ import { PrismaService } from './prisma/prisma.service';
         provide: APP_GUARD,
         useClass: StaticTokenGuard,
       },
+      IndegoService,
       HourlyTask,
-      IndegoService,PrismaService
+      PrismaService
     ],
 })
 export class AppModule {}

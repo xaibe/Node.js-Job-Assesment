@@ -10,8 +10,13 @@ export class IndegoController {
 
   @Post('indego-data-fetch-and-store-it-db')
   async fetchAndStoreIndegoData() {
-    await this.indegoService.fetchAndStoreIndegoData();
+    const indegoData = await this.indegoService.fetchAndStoreIndegoData();
+    if(!indegoData){
+      throw new NotFoundException('Indego data not found.');
+    }
+    else{  
     return { message: 'Indego data fetched and stored successfully.' };
+  }
   }
 
   
